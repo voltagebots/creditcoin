@@ -5,6 +5,7 @@
 trigger:
 - main
 - testnet
+- azure-pipelines
 - refs/tags/*
 
 pr:
