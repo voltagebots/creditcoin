@@ -34,7 +34,7 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build and Push Image
+  displayName: Build and push
   jobs:
   - job: Build
     displayName: Build
