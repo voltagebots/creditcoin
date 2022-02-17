@@ -29,8 +29,6 @@ variables:
   imageRepository: 'cc-substrate/testnet'
   containerRegistry: 'ccacrtest.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  registryName: 'ccacrtest'
-  DOCKER_BUILDKIT: 1
 
 stages:
 - stage: Build
