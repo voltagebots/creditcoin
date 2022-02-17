@@ -58,6 +58,11 @@ stages:
         echo "Image tags are: $tag"
       displayName: Get tags
 
+    - task: Docker@2
+      inputs:
+        containerRegistry: $(dockerRegistryServiceConnection)
+        command: login
+
     - script: "docker pull $(dockerRegistryServiceConnection)/$(imageRepository):latest"
       displayName: Pull latest for layer caching
       continueOnError: true
