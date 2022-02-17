@@ -61,7 +61,7 @@ stages:
     - task: Docker@2
       displayName: Docker Login
       inputs:
-        containerRegistry: $(dockerRegistryServiceConnection)
+        containerRegistry: ccacrtest
         command: login
 
     - script: "docker pull $(containerRegistry)/$(imageRepository):latest"
@@ -71,11 +71,11 @@ stages:
     - task: Docker@2
       displayName: Build Image
       inputs:
-        containerRegistry: $(containerRegistry)
+        containerRegistry: ccacrtest
         repository: $(imageRepository)
         command: build
         Dockerfile: $(dockerfilePath)
-        arguments: --cache-from=$(dockerRegistryServiceConnection)/$(imageRepository):latest
+        arguments: --cache-from=$(containerRegistry)/$(imageRepository):latest
         tags: |
           latest
           $(gitTag)
