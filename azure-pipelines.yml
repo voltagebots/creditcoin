@@ -64,7 +64,7 @@ stages:
         containerRegistry: ccacrtest
         command: login
 
-    - script: "docker pull $(containerRegistry)/$(imageRepository):latest"
+    - script: "docker pull $(containerRegistry)/$(imageRepository):13"
       displayName: Pull latest image for layer caching
       continueOnError: true
 
@@ -75,7 +75,7 @@ stages:
         repository: $(imageRepository)
         command: build
         Dockerfile: $(dockerfilePath)
-        arguments: --cache-from=$(containerRegistry)/$(imageRepository):latest
+        arguments: '--cache-from=$(containerRegistry)/$(imageRepository):13'
         tags: |
           latest
           $(gitTag)
