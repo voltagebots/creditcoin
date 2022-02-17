@@ -59,18 +59,19 @@ stages:
       displayName: Get tags
 
     - task: Docker@2
+      displayName: Docker Login
       inputs:
         containerRegistry: $(dockerRegistryServiceConnection)
         command: login
 
-    - script: "docker pull $(dockerRegistryServiceConnection)/$(imageRepository):latest"
-      displayName: Pull latest for layer caching
+    - script: "docker pull $(containerRegistry)/$(imageRepository):latest"
+      displayName: Pull latest image for layer caching
       continueOnError: true
 
     - task: Docker@2
       displayName: Build Image
       inputs:
-        containerRegistry: $(dockerRegistryServiceConnection)
+        containerRegistry: $(containerRegistry)
         repository: $(imageRepository)
         command: build
         Dockerfile: $(dockerfilePath)
