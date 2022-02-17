@@ -44,7 +44,7 @@ stages:
         # tags will be 2.0.1,stable,latest. For release candidates (e.g 2.0.1-beta),
         # tags will be 2.0.2-beta,beta,latest.
         # export tag=$(git describe --tag)
-        export tag="1.1.0-beta"
+        export tag="0.1.0-testpipeline"
         export ccTag=$(echo $tag | awk -F- '{print $2}')
         if [ -z "$ccTag" ] ; then
           echo "##vso[task.setvariable variable=gitTag;]$tag"
