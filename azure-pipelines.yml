@@ -15,7 +15,9 @@ trigger:
 pr: none
 
 pool:
-  vmImage: ubuntu-latest
+  name: Creditcoin
+  demands:
+   - agent.name -equals Ubuntu16BuildServer
 
 resources:
 - repo: self
