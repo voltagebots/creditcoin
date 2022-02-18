@@ -28,6 +28,7 @@ variables:
   imageRepository: 'cc-substrate/testnet'
   containerRegistry: 'ccacrtest.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  registryName: 'ccacrtest'
 
 stages:
 - stage: Build
@@ -58,17 +59,17 @@ stages:
     - task: Docker@2
       displayName: Docker Login
       inputs:
-        containerRegistry: ccacrtest
+        containerRegistry: $(registryName)
         command: login
 
-    - script: "docker pull $(containerRegistry)/$(imageRepository):13"
+    - script: "docker pull $(containerRegistry)/$(imageRepository):latest"
       displayName: Pull latest image for layer caching
       continueOnError: true
 
     - task: Docker@2
       displayName: Build Image
       inputs:
-        containerRegistry: ccacrtest
+        containerRegistry: $(registryName)
         repository: $(imageRepository)
         command: build
         Dockerfile: $(dockerfilePath)
@@ -78,13 +79,13 @@ stages:
           $(gitTag)
           $(ccTag)
 
-    # - task: Docker@2
-    #   displayName: Push Image
-    #   inputs:
-    #     command: push
-    #     containerRegistry: $(dockerRegistryServiceConnection)
-    #     repository: $(imageRepository)
-    #     tags: |
-    #       latest
-    #       $(gitTag)
-    #       $(ccTag)
+    - task: Docker@2
+      displayName: Push Image
+      inputs:
+        command: push
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(imageRepository)
+        tags: |
+          latest
+          $(gitTag)
+          $(ccTag)
