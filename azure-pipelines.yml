@@ -16,7 +16,9 @@ pr: none
 
 #Use self hosted build server. Resource ID: resourceGroups/devcommon/providers/Microsoft.Compute/virtualMachines/Ubuntu16BuildServer
 pool:
-  vmImage: ubuntu-latest
+  name: Creditcoin
+  demands:
+   - agent.name -equals Ubuntu16BuildServer
 
 resources:
 - repo: self
