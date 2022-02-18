@@ -1,4 +1,5 @@
 FROM docker.io/paritytech/ci-linux:production as builder
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /creditcoin-node
 COPY Cargo.toml .
 COPY Cargo.lock .
@@ -7,7 +8,7 @@ ADD pallets /creditcoin-node/pallets
 ADD primitives /creditcoin-node/primitives
 ADD runtime /creditcoin-node/runtime
 ADD sha3pow /creditcoin-node/sha3pow
-RUN cargo build --release
+RUN source ~/.cargo/env && cargo build --release
 
 FROM ubuntu:20.04
 EXPOSE 30333/tcp
