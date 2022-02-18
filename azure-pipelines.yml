@@ -65,7 +65,6 @@ stages:
 
     - script: |
         docker pull $(containerRegistry)/$(imageRepository):latest
-        docker pull $(containerRegistry)/$(imageRepository):builder
       displayName: Pull latest image for layer caching
       continueOnError: true
 
@@ -76,7 +75,7 @@ stages:
         repository: $(imageRepository)
         command: build
         Dockerfile: $(dockerfilePath)
-        arguments: --target=builder --cache-from=$(containerRegistry)/$(imageRepository):builder
+        arguments: --target=builder --cache-from=$(containerRegistry)/$(imageRepository):latest
         tags: |
           builder
 
