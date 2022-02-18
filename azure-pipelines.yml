@@ -70,7 +70,7 @@ stages:
       displayName: Pull latest image for layer caching
       continueOnError: true
 
-      - task: Docker@2
+    - task: Docker@2
       displayName: Build First Layer
       inputs:
         containerRegistry: $(registryName)
@@ -79,9 +79,7 @@ stages:
         Dockerfile: $(dockerfilePath)
         arguments: --target=builder --cache-from=$(containerRegistry)/$(imageRepository):builder
         tags: |
-          latest
-          $(gitTag)
-          $(ccTag)
+          builder
 
     - task: Docker@2
       displayName: Build Image
