@@ -73,7 +73,7 @@ stages:
         repository: $(imageRepository)
         command: build
         Dockerfile: $(dockerfilePath)
-        arguments: '--cache-from=$(containerRegistry)/$(imageRepository):13'
+        arguments: '--cache-from=$(containerRegistry)/$(imageRepository):latest'
         tags: |
           latest
           $(gitTag)
