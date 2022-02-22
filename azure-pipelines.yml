@@ -40,7 +40,7 @@ stages:
     displayName: CI File Changes
     steps:
     - bash: |
-        FILE_FILTER="./ci-build.Dockerfile"
+        FILE_FILTER="ci-build.Dockerfile"
         CHANGED_FILES=$(git diff HEAD HEAD~ --name-only)
         COUNT=0
 
