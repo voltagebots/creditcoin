@@ -13,7 +13,7 @@ ADD runtime /creditcoin-node/runtime
 ADD sha3pow /creditcoin-node/sha3pow
 RUN source ~/.cargo/env && cargo build --release
 
-FROM alpine:3.15
+FROM ubuntu:20.04
 EXPOSE 30333/tcp
 EXPOSE 30333/udp
 EXPOSE 9944 9933 9615
