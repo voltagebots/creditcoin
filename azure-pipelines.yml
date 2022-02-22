@@ -14,7 +14,7 @@ trigger:
 
 pr: none
 
-#Use self hosted build server. Resource ID: resourceGroups/devcommon/providers/Microsoft.Compute/virtualMachines/Ubuntu16BuildServer
+##Use self hosted build server. Resource ID: resourceGroups/devcommon/providers/Microsoft.Compute/virtualMachines/Ubuntu16BuildServer
 pool:
   name: Creditcoin
   demands:
