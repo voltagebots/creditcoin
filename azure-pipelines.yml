@@ -96,6 +96,9 @@ stages:
         tags: |
           production
 
+- stage: Build_Creditcoin_Image
+  displayName: Build and Push CI Image
+  jobs:
   - job: Build_IMAGE
     displayName: Build-Creditcoin-Image
     steps:
