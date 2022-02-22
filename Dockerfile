@@ -11,7 +11,11 @@ ADD pallets /creditcoin-node/pallets
 ADD primitives /creditcoin-node/primitives
 ADD runtime /creditcoin-node/runtime
 ADD sha3pow /creditcoin-node/sha3pow
-RUN source ~/.cargo/env && cargo build --release
+RUN --mount=type=cache,target=/creditcoin-node/.cargo/git \
+    --mount=type=cache,target=/creditcoin-node/.cargo/registry \
+    --mount=type=cache,sharing=private,target=/creditcoin-node/target \
+    source ~/.cargo/env && cargo build --release
+
 
 FROM ubuntu:20.04
 EXPOSE 30333/tcp
