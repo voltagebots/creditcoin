@@ -52,64 +52,74 @@ stages:
       displayName: Build Image
       inputs:
         containerRegistry: $(registryName)
-        repository: 'creditcoin/ci-linux:production'
+        repository: 'creditcoin/ci-linux'
         command: build
         Dockerfile: '$(Build.SourcesDirectory)/Dockerfile-ci'
         tags: |
           production
 
-- stage: Build
-  displayName: Build and Push Image
-  jobs:
-  - job: Build
-    displayName: Build
-    steps:
-    - script: |
-        # Determine the tag for the image: If it is a stable release (e.g 2.0.1),
-        # tags will be 2.0.1,stable,latest. For release candidates (e.g 2.0.1-beta),
-        # tags will be 2.0.2-beta,beta,latest.
-        # export tag=$(git describe --tag)
-        export tag="0.1.0-testpipeline"
-        export ccTag=$(echo $tag | awk -F- '{print $2}')
-        if [ -z "$ccTag" ] ; then
-          echo "##vso[task.setvariable variable=gitTag;]$tag"
-          echo "##vso[task.setvariable variable=ccTag;]stable"
-          export tag=($tag,stable)
-        else
-          echo "##vso[task.setvariable variable=gitTag;]$tag"
-          echo "##vso[task.setvariable variable=ccTag;]$ccTag"
-          export tag=($tag,$ccTag)
-        fi
-        echo "Image tags are: $tag"
-      displayName: Get tags
-
+    #Push Image to registry
     - task: Docker@2
-      displayName: Docker Login
+      displayName: Push Image
       inputs:
-        containerRegistry: $(registryName)
-        command: login
-
-    #Build second stage in Dockerfile, caches from previously :builder.
-    - task: Docker@2
-      displayName: Build Image
-      inputs:
-        containerRegistry: $(registryName)
-        repository: $(imageRepository)
-        command: build
-        Dockerfile: $(dockerfilePath)
+        command: push
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: 'creditcoin/ci-linux'
         tags: |
-          latest
-          $(gitTag)
-          $(ccTag)
+          production
 
-    # #Push Image to registry
-    # - task: Docker@2
-    #   displayName: Push Image
-    #   inputs:
-    #     command: push
-    #     containerRegistry: $(dockerRegistryServiceConnection)
-    #     repository: $(imageRepository)
-    #     tags: |
-    #       latest
-    #       $(gitTag)
-    #       $(ccTag)
+# - stage: Build
+#   displayName: Build and Push Image
+#   jobs:
+#   - job: Build
+#     displayName: Build
+#     steps:
+#     - script: |
+#         # Determine the tag for the image: If it is a stable release (e.g 2.0.1),
+#         # tags will be 2.0.1,stable,latest. For release candidates (e.g 2.0.1-beta),
+#         # tags will be 2.0.2-beta,beta,latest.
+#         # export tag=$(git describe --tag)
+#         export tag="0.1.0-testpipeline"
+#         export ccTag=$(echo $tag | awk -F- '{print $2}')
+#         if [ -z "$ccTag" ] ; then
+#           echo "##vso[task.setvariable variable=gitTag;]$tag"
+#           echo "##vso[task.setvariable variable=ccTag;]stable"
+#           export tag=($tag,stable)
+#         else
+#           echo "##vso[task.setvariable variable=gitTag;]$tag"
+#           echo "##vso[task.setvariable variable=ccTag;]$ccTag"
+#           export tag=($tag,$ccTag)
+#         fi
+#         echo "Image tags are: $tag"
+#       displayName: Get tags
+
+#     - task: Docker@2
+#       displayName: Docker Login
+#       inputs:
+#         containerRegistry: $(registryName)
+#         command: login
+
+#     #Build second stage in Dockerfile, caches from previously :builder.
+#     - task: Docker@2
+#       displayName: Build Image
+#       inputs:
+#         containerRegistry: $(registryName)
+#         repository: $(imageRepository)
+#         command: build
+#         Dockerfile: $(dockerfilePath)
+#         tags: |
+#           latest
+#           $(gitTag)
+#           $(ccTag)
+
+#     #Push Image to registry
+#     - task: Docker@2
+#       displayName: Push Image
+#       inputs:
+#         command: push
+#         containerRegistry: $(dockerRegistryServiceConnection)
+#         repository: $(imageRepository)
+#         tags: |
+#           latest
+#           $(gitTag)
+#           $(ccTag)
