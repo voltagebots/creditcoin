@@ -121,33 +121,33 @@ stages:
         echo "Image tags are: $tag"
       displayName: Get Creditcoin Image Tags
 
-    # - task: Docker@2
-    #   displayName: Docker Login
-    #   inputs:
-    #     containerRegistry: $(registryName)
-    #     command: login
+    - task: Docker@2
+      displayName: Docker Login
+      inputs:
+        containerRegistry: $(registryName)
+        command: login
 
-    # #Build second stage in Dockerfile, caches from previously :builder.
-    # - task: Docker@2
-    #   displayName: Build Image
-    #   inputs:
-    #     containerRegistry: $(registryName)
-    #     repository: $(imageRepository)
-    #     command: build
-    #     Dockerfile: $(dockerfilePath)
-    #     tags: |
-    #       latest
-    #       $(gitTag)
-    #       $(ccTag)
+    #Build second stage in Dockerfile, caches from previously :builder.
+    - task: Docker@2
+      displayName: Build Image
+      inputs:
+        containerRegistry: $(registryName)
+        repository: $(imageRepository)
+        command: build
+        Dockerfile: $(dockerfilePath)
+        tags: |
+          latest
+          $(gitTag)
+          $(ccTag)
 
-    # #Push Image to registry
-    # - task: Docker@2
-    #   displayName: Push Image
-    #   inputs:
-    #     command: push
-    #     containerRegistry: $(dockerRegistryServiceConnection)
-    #     repository: $(imageRepository)
-    #     tags: |
-    #       latest
-    #       $(gitTag)
-    #       $(ccTag)
+    #Push Image to registry
+    - task: Docker@2
+      displayName: Push Image
+      inputs:
+        command: push
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(imageRepository)
+        tags: |
+          latest
+          $(gitTag)
+          $(ccTag)
