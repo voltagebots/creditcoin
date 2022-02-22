@@ -76,8 +76,6 @@ stages:
     #Build second stage in Dockerfile, caches from previously :builder.
     - task: Docker@2
       displayName: Build Image
-      dependsOn: CheckChanges
-      condition: eq(dependencies.CheckChanges.outputs['check_changes.CI_DOCKERFILE_CHANGED'], 'true')
       inputs:
         containerRegistry: $(registryName)
         repository: 'creditcoin/ci-linux'
@@ -99,7 +97,7 @@ stages:
   - job: Build_IMAGE
     displayName: Build-Creditcoin-Image
     dependsOn: CheckChanges
-    condition: eq(dependencies.CheckChanges.outputs['check_changes.SOURCE_CODE_CHANGED'], 'true')
+    condition: eq(dependencies.CheckChanges.outputs['check_changes.CI_DOCKERFILE_CHANGED'], 'true')
     steps:
     - script: |
         # Determine the tag for the image: If it is a stable release (e.g 2.0.1),
