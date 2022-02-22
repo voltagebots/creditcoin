@@ -35,9 +35,6 @@ variables:
 stages:
 - stage: Build_CI_Image
   displayName: Build and Push CI Image
-  paths:
-    include:
-    - Dockerfile-ci
   pool:
     vmImage: ubuntu-latest
   jobs:
