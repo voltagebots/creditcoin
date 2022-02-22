@@ -1,5 +1,5 @@
-#Use ci-stage image 
-FROM creditcoin/ci-linux:production AS builder
+#Use ci-stage image
+FROM ccacrtest.azurecr.io/creditcoin/ci-linux:production AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /creditcoin-node
 COPY Cargo.toml .
