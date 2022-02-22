@@ -38,7 +38,7 @@ stages:
   pool:
     vmImage: ubuntu-latest
   jobs:
-  - job: Build
+  - job: Build_CI
     displayName: Build
     steps:
     - task: Docker@2
@@ -68,10 +68,7 @@ stages:
         tags: |
           production
 
-- stage: Build
-  displayName: Build and Push Image
-  jobs:
-  - job: Build
+  - job: Build_IMAGE
     displayName: Build
     steps:
     - script: |
