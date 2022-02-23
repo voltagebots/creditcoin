@@ -1,4 +1,4 @@
-#Builds the image and tag it creditcoin/ci-linux:production
+#Build the image and tag it creditcoin/ci-linux:production
 FROM debian:bullseye-slim
 ENV DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-c"]
