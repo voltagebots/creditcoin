@@ -25,7 +25,7 @@ resources:
 
 variables:
   #Container registry service connection established during pipeline creation
-  containerRegistry: 'dockerhub-franklin.okpako'
+  containerRegistry: 'Docker Hub - mrausnadian'
   dockerfilePath: '$(Build.SourcesDirectory)/ci-linux/ci-build.Dockerfile'
   registryName: 'gluwa/ci-linux'
   DOCKER_BUILDKIT: 1
