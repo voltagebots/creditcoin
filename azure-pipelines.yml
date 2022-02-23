@@ -11,6 +11,7 @@ trigger:
   paths:
     exclude:
     - README.md
+    - ci-linux/*
 
 pr: none
 
@@ -33,69 +34,6 @@ variables:
   DOCKER_BUILDKIT: 1
 
 stages:
-- stage: Build_CI_Image
-  displayName: BuildnPush CI Image
-  jobs:
-  - job: CheckChanges
-    displayName: CI File Changes
-    steps:
-    - bash: |
-        FILE_FILTER="ci-build.Dockerfile"
-        CHANGED_FILES=$(git diff HEAD HEAD~ --name-only)
-        COUNT=0
-
-        echo "Checking for file changes in ci_build.Dockerfile..."
-        for FILE in $CHANGED_FILES
-        do
-          if [[ $FILE == *$FILE_FILTER* ]]; then
-            echo "MATCH:  ${FILE} changed"
-            COUNT=$(($COUNT+1))
-          else
-            echo "IGNORE: ${FILE} changed"
-          fi
-        done
-
-        echo "$COUNT match(es) for filter '$FILE_FILTER' found."
-        if [[ $COUNT -gt 0 ]]; then
-          echo "##vso[task.setvariable variable=CI_DOCKERFILE_CHANGED;isOutput=true]true"
-        else
-          echo "##vso[task.setvariable variable=CI_DOCKERFILE_CHANGED;isOutput=true]false"
-        fi
-      name: check_changes
-      displayName: Check changed files
-
-  - job: Build_CI
-    displayName: Build_CI_Image
-    dependsOn: CheckChanges
-    condition: eq(dependencies.CheckChanges.outputs['check_changes.CI_DOCKERFILE_CHANGED'], 'true')
-    steps:
-    - task: Docker@2
-      displayName: Docker Login
-      inputs:
-        containerRegistry: $(registryName)
-        command: login
-
-    #Build second stage in Dockerfile, caches from previously :builder.
-    - task: Docker@2
-      displayName: Build Image
-      inputs:
-        containerRegistry: $(registryName)
-        repository: 'creditcoin/ci-linux'
-        command: build
-        Dockerfile: '$(Build.SourcesDirectory)/ci-build.Dockerfile'
-        tags: |
-          production
-
-    #Push Image to registry
-    - task: Docker@2
-      displayName: Push Image
-      inputs:
-        command: push
-        containerRegistry: $(dockerRegistryServiceConnection)
-        repository: 'creditcoin/ci-linux'
-        tags: |
-          production
-
 - stage: Build_Creditcoin_Image
   displayName: BuildnPush Creditcoin Image
   jobs:
