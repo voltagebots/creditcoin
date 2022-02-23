@@ -38,8 +38,6 @@ stages:
   jobs:
   - job: Build_CI
     displayName: Build_CI_Image
-    dependsOn: CheckChanges
-    condition: eq(dependencies.CheckChanges.outputs['check_changes.CI_DOCKERFILE_CHANGED'], 'true')
     steps:
     - task: Docker@2
       displayName: Docker Login
