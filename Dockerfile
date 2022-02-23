@@ -9,6 +9,7 @@ ADD pallets /creditcoin-node/pallets
 ADD primitives /creditcoin-node/primitives
 ADD runtime /creditcoin-node/runtime
 ADD sha3pow /creditcoin-node/sha3pow
+RUN ls -al
 RUN --mount=type=cache,target=/creditcoin-node/target \
     --mount=type=cache,target=/root/.cargo/git \
     --mount=type=cache,target=/root/.cargo/registry \
