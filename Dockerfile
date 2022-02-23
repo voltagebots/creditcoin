@@ -11,20 +11,21 @@ ADD pallets /creditcoin-node/pallets
 ADD primitives /creditcoin-node/primitives
 ADD runtime /creditcoin-node/runtime
 ADD sha3pow /creditcoin-node/sha3pow
-RUN --mount=type=cache,target=/creditcoin-node/.cargo/git \
-    --mount=type=cache,target=/creditcoin-node/.cargo/registry \
+RUN --mount=type=cache,target=/root/.cargo/git \
+    --mount=type=cache,target=/root/.cargo/registry \
     --mount=type=cache,target=/creditcoin-node/target \
     source ~/.cargo/env && cargo build --release
+RUN file /creditcoin-node/**/**/**
 
 
-FROM ubuntu:20.04
-EXPOSE 30333/tcp
-EXPOSE 30333/udp
-EXPOSE 9944 9933 9615
-COPY --from=builder /creditcoin-node/target/release/creditcoin-node /bin/creditcoin-node
-COPY chainspecs .
-COPY entrypoint.sh .
-COPY iconv.sh .
-RUN chmod +x /entrypoint.sh
-RUN chmod +x /iconv.sh
-ENTRYPOINT [ "/bin/bash", "-c", "./entrypoint.sh |& ./iconv.sh" ]
+# FROM ubuntu:20.04
+# EXPOSE 30333/tcp
+# EXPOSE 30333/udp
+# EXPOSE 9944 9933 9615
+# COPY --from=builder /creditcoin-node/target/release/creditcoin-node /bin/creditcoin-node
+# COPY chainspecs .
+# COPY entrypoint.sh .
+# COPY iconv.sh .
+# RUN chmod +x /entrypoint.sh
+# RUN chmod +x /iconv.sh
+# ENTRYPOINT [ "/bin/bash", "-c", "./entrypoint.sh |& ./iconv.sh" ]
