@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/root/.cargo/git \
     --mount=type=cache,target=/root/.cargo/registry \
     --mount=type=cache,target=/creditcoin-node/target \
     source ~/.cargo/env && cargo build --release
-RUN ls -al /creditcoin-node/target/release
+RUN ls -al
 
 
 # FROM ubuntu:20.04
