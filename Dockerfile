@@ -1,16 +1,6 @@
-FROM ubuntu:20.04 AS builder
+#Use ci-stage image
+FROM ccacrtest.azurecr.io/creditcoin/ci-linux:production AS builder
 ENV DEBIAN_FRONTEND=noninteractive
-SHELL ["/bin/bash", "-c"]
-RUN apt-get update && apt-get install -y \
-    cmake \
-    pkg-config \
-    libssl-dev \
-    git \
-    build-essential \
-    clang \
-    libclang-dev \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 RUN source ~/.cargo/env && rustup default stable && rustup update nightly && rustup update stable && rustup target add wasm32-unknown-unknown --toolchain nightly
 WORKDIR /creditcoin-node
@@ -21,7 +11,13 @@ ADD pallets /creditcoin-node/pallets
 ADD primitives /creditcoin-node/primitives
 ADD runtime /creditcoin-node/runtime
 ADD sha3pow /creditcoin-node/sha3pow
-RUN source ~/.cargo/env && cargo build --release
+RUN --mount=type=cache,target=/creditcoin-node/target \
+    --mount=type=cache,target=/root/.cargo/git \
+    --mount=type=cache,target=/root/.cargo/registry \
+    source ~/.cargo/env && cargo build --release --target wasm32-unknown-unknown && \
+    cp target/wasm32-unknown-unknown/release/creditcoin-node ./target/release/creditcoin-node
+RUN ls -al target
+
 
 FROM ubuntu:20.04
 EXPOSE 30333/tcp

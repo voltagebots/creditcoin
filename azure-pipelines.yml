@@ -14,7 +14,7 @@ trigger:
 
 pr: none
 
-#Use self hosted build server. Resource ID: resourceGroups/devcommon/providers/Microsoft.Compute/virtualMachines/Ubuntu16BuildServer
+##Use self hosted build server. Resource ID: resourceGroups/devcommon/providers/Microsoft.Compute/virtualMachines/Ubuntu16BuildServer
 pool:
   name: Creditcoin
   demands:
@@ -33,11 +33,74 @@ variables:
   DOCKER_BUILDKIT: 1
 
 stages:
-- stage: Build
-  displayName: Build and push
+- stage: Build_CI_Image
+  displayName: BuildnPush CI Image
   jobs:
-  - job: Build
-    displayName: Build
+  - job: CheckChanges
+    displayName: CI File Changes
+    steps:
+    - bash: |
+        FILE_FILTER="ci-build.Dockerfile"
+        CHANGED_FILES=$(git diff HEAD HEAD~ --name-only)
+        COUNT=0
+
+        echo "Checking for file changes in ci_build.Dockerfile..."
+        for FILE in $CHANGED_FILES
+        do
+          if [[ $FILE == *$FILE_FILTER* ]]; then
+            echo "MATCH:  ${FILE} changed"
+            COUNT=$(($COUNT+1))
+          else
+            echo "IGNORE: ${FILE} changed"
+          fi
+        done
+
+        echo "$COUNT match(es) for filter '$FILE_FILTER' found."
+        if [[ $COUNT -gt 0 ]]; then
+          echo "##vso[task.setvariable variable=CI_DOCKERFILE_CHANGED;isOutput=true]true"
+        else
+          echo "##vso[task.setvariable variable=CI_DOCKERFILE_CHANGED;isOutput=true]false"
+        fi
+      name: check_changes
+      displayName: Check changed files
+
+  - job: Build_CI
+    displayName: Build_CI_Image
+    dependsOn: CheckChanges
+    condition: eq(dependencies.CheckChanges.outputs['check_changes.CI_DOCKERFILE_CHANGED'], 'true')
+    steps:
+    - task: Docker@2
+      displayName: Docker Login
+      inputs:
+        containerRegistry: $(registryName)
+        command: login
+
+    #Build second stage in Dockerfile, caches from previously :builder.
+    - task: Docker@2
+      displayName: Build Image
+      inputs:
+        containerRegistry: $(registryName)
+        repository: 'creditcoin/ci-linux'
+        command: build
+        Dockerfile: '$(Build.SourcesDirectory)/ci-build.Dockerfile'
+        tags: |
+          production
+
+    #Push Image to registry
+    - task: Docker@2
+      displayName: Push Image
+      inputs:
+        command: push
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: 'creditcoin/ci-linux'
+        tags: |
+          production
+
+- stage: Build_Creditcoin_Image
+  displayName: BuildnPush Creditcoin Image
+  jobs:
+  - job: Build_IMAGE
+    displayName: Build-Creditcoin-Image
     steps:
     - script: |
         # Determine the tag for the image: If it is a stable release (e.g 2.0.1),
@@ -56,7 +119,7 @@ stages:
           export tag=($tag,$ccTag)
         fi
         echo "Image tags are: $tag"
-      displayName: Get tags
+      displayName: Get Creditcoin Image Tags
 
     - task: Docker@2
       displayName: Docker Login
@@ -64,22 +127,7 @@ stages:
         containerRegistry: $(registryName)
         command: login
 
-    - script: |
-        docker pull $(containerRegistry)/$(imageRepository):latest
-      displayName: Pull latest image for layer caching
-      continueOnError: true
-
-    - task: Docker@2
-      displayName: Build First Layer
-      inputs:
-        containerRegistry: $(registryName)
-        repository: $(imageRepository)
-        command: build
-        Dockerfile: $(dockerfilePath)
-        arguments: --target=builder --cache-from=$(containerRegistry)/$(imageRepository):latest
-        tags: |
-          builder
-
+    #Build second stage in Dockerfile, caches from previously :builder.
     - task: Docker@2
       displayName: Build Image
       inputs:
@@ -87,12 +135,12 @@ stages:
         repository: $(imageRepository)
         command: build
         Dockerfile: $(dockerfilePath)
-        arguments: '--cache-from=$(containerRegistry)/$(imageRepository):latest'
         tags: |
           latest
           $(gitTag)
           $(ccTag)
 
+    # #Push Image to registry
     # - task: Docker@2
     #   displayName: Push Image
     #   inputs:
