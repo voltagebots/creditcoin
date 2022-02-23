@@ -11,10 +11,11 @@ ADD pallets /creditcoin-node/pallets
 ADD primitives /creditcoin-node/primitives
 ADD runtime /creditcoin-node/runtime
 ADD sha3pow /creditcoin-node/sha3pow
-RUN --mount=type=cache,target=/root/.cargo/git \
+RUN --mount=type=cache,target=/creditcoin-node/target \
+    --mount=type=cache,target=/root/.cargo/git \
     --mount=type=cache,target=/root/.cargo/registry \
-    --mount=type=cache,target=/creditcoin-node/target \
-    source ~/.cargo/env && cargo build --release
+    source ~/.cargo/env && cargo build --release --target wasm32-unknown-unknown \
+    cp target/wasm32-unknown-unknown/release/creditcoin-node ./target/release/creditcoin-node
 RUN ls -al target
 
 
