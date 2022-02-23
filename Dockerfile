@@ -1,8 +1,6 @@
 #Use ci-stage image
 FROM ccacrtest.azurecr.io/creditcoin/ci-linux:production AS builder
 ENV DEBIAN_FRONTEND=noninteractive
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-RUN source ~/.cargo/env && rustup default stable && rustup update nightly && rustup update stable && rustup target add wasm32-unknown-unknown --toolchain nightly
 WORKDIR /creditcoin-node
 COPY Cargo.toml .
 COPY Cargo.lock .
@@ -14,10 +12,10 @@ ADD sha3pow /creditcoin-node/sha3pow
 RUN --mount=type=cache,target=/creditcoin-node/target \
     --mount=type=cache,target=/root/.cargo/git \
     --mount=type=cache,target=/root/.cargo/registry \
-    source ~/.cargo/env && cargo build --release --target wasm32-unknown-unknown && \
-    cp target/wasm32-unknown-unknown/release/creditcoin-node ./target/release/creditcoin-node
-RUN ls -al target
+    source ~/.cargo/env && cargo build --release
 
+RUN --mount=type=cache,target=/creditcoin-node/target \
+    cp /creditcoin-node/target/release/creditcoin-node /usr/local/bin/creditcoin-node
 
 FROM ubuntu:20.04
 EXPOSE 30333/tcp
