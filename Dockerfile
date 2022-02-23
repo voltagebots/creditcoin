@@ -13,7 +13,7 @@ ADD runtime /creditcoin-node/runtime
 ADD sha3pow /creditcoin-node/sha3pow
 RUN --mount=type=cache,target=/creditcoin-node/.cargo/git \
     --mount=type=cache,target=/creditcoin-node/.cargo/registry \
-    --mount=type=cache,sharing=private,target=/creditcoin-node/target \
+    --mount=type=cache,target=/creditcoin-node/target \
     source ~/.cargo/env && cargo build --release
 
 
