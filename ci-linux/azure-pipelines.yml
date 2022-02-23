@@ -25,11 +25,9 @@ resources:
 
 variables:
   #Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'f5aa2da0-fdf0-4f31-b77d-6b7c374f51e6'
-  imageRepository: 'cc-substrate/testnet'
-  containerRegistry: 'ccacrtest.azurecr.io'
+  containerRegistry: 'dockerhub-franklin.okpako'
   dockerfilePath: '$(Build.SourcesDirectory)/ci-linux/ci-build.Dockerfile'
-  registryName: 'ccacrtest'
+  registryName: 'gluwa/ci-linux'
   DOCKER_BUILDKIT: 1
 
 stages:
@@ -46,21 +44,10 @@ stages:
         command: login
 
     - task: Docker@2
-      displayName: Build Image
       inputs:
-        containerRegistry: $(registryName)
-        repository: 'creditcoin/ci-linux'
-        command: build
+        containerRegistry: $(containerRegistry)
+        repository: $(registryName)
+        command: 'buildAndPush'
         Dockerfile: $(dockerfilePath)
-        tags: |
-          production
-
-    #Push Image to registry
-    - task: Docker@2
-      displayName: Push Image
-      inputs:
-        command: push
-        containerRegistry: $(dockerRegistryServiceConnection)
-        repository: 'creditcoin/ci-linux'
         tags: |
           production
