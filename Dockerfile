@@ -14,7 +14,7 @@ ADD sha3pow /creditcoin-node/sha3pow
 RUN --mount=type=cache,target=/creditcoin-node/target \
     --mount=type=cache,target=/root/.cargo/git \
     --mount=type=cache,target=/root/.cargo/registry \
-    source ~/.cargo/env && cargo build --release --target wasm32-unknown-unknown \
+    source ~/.cargo/env && cargo build --release --target wasm32-unknown-unknown && \
     cp target/wasm32-unknown-unknown/release/creditcoin-node ./target/release/creditcoin-node
 RUN ls -al target
 
