@@ -28,7 +28,7 @@ variables:
   dockerRegistryServiceConnection: 'f5aa2da0-fdf0-4f31-b77d-6b7c374f51e6'
   imageRepository: 'cc-substrate/testnet'
   containerRegistry: 'ccacrtest.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  dockerfilePath: '$(Build.SourcesDirectory)/ci-linux/ci-build.Dockerfile'
   registryName: 'ccacrtest'
   DOCKER_BUILDKIT: 1
 
@@ -51,7 +51,7 @@ stages:
         containerRegistry: $(registryName)
         repository: 'creditcoin/ci-linux'
         command: build
-        Dockerfile: '$(Build.SourcesDirectory)/ci-build.Dockerfile'
+        Dockerfile: $(dockerfilePath)
         tags: |
           production
 
