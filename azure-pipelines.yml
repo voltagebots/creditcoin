@@ -140,14 +140,14 @@ stages:
           $(gitTag)
           $(ccTag)
 
-    #Push Image to registry
-    - task: Docker@2
-      displayName: Push Image
-      inputs:
-        command: push
-        containerRegistry: $(dockerRegistryServiceConnection)
-        repository: $(imageRepository)
-        tags: |
-          latest
-          $(gitTag)
-          $(ccTag)
+    # #Push Image to registry
+    # - task: Docker@2
+    #   displayName: Push Image
+    #   inputs:
+    #     command: push
+    #     containerRegistry: $(dockerRegistryServiceConnection)
+    #     repository: $(imageRepository)
+    #     tags: |
+    #       latest
+    #       $(gitTag)
+    #       $(ccTag)

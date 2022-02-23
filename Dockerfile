@@ -1,4 +1,4 @@
-#Use ci-stage image
+#Use ci-stage image as base image
 FROM ccacrtest.azurecr.io/creditcoin/ci-linux:production AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /creditcoin-node
