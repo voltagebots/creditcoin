@@ -30,7 +30,7 @@ steps:
     - task: ArchiveFiles@2
       displayName: Archive files
       inputs:
-        rootFolderOrFile: "$(Build.BinariesDirectory)/${{ build.target }}/release"
+        rootFolderOrFile: "$(Build.BinariesDirectory)/*/release"
         includeRootFolder: false
         archiveType: ${{ parameters['archiveType'] }}
         tarCompression: ${{ parameters['compression'] }}
