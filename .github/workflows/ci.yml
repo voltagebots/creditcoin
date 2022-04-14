@@ -107,35 +107,21 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly-2022-03-21
+          components: llvm-tools-preview
           target: wasm32-unknown-unknown
           profile: minimal
           override: true
       - uses: Swatinem/rust-cache@v1
 
-      - name: Configure flags for collecting coverage
-        run: |
-          echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
-          echo "RUSTFLAGS=-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests" >> $GITHUB_ENV
-          echo "RUSTDOCFLAGS=-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests" >> $GITHUB_ENV
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Run tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: -- --test-threads 1
-        env:
-          CARGO_INCREMENTAL: ${{ env.CARGO_INCREMENTAL }}
-          RUSTFLAGS: ${{ env.RUSTFLAGS }}
-          RUSTDOCFLAGS: ${{ env.RUSTDOCFLAGS }}
-          SKIP_WASM_BUILD: 1
-      - id: coverage
-        uses: actions-rs/grcov@v0.1
-        with:
-          config: .grcov.yml
+        run: cargo llvm-cov --workspace --lcov --output-path lcov.info
 
       - uses: codecov/codecov-action@v3
         with:
-          files: ${{ steps.coverage.outputs.report }}
+          files: lcov.info
           fail_ci_if_error: true
           verbose: true
 
