@@ -6,6 +6,7 @@ import { Guid } from 'js-guid';
 import { ApiPromise } from '@polkadot/api';
 import { KeyringPair } from '@polkadot/keyring/types';
 import type { Null, Option } from '@polkadot/types';
+import { PalletCreditcoinTransfer } from '@polkadot/types/lookup';
 
 import { lendOnEth } from 'credal-js/lib/ethereum';
 import {
@@ -16,9 +17,11 @@ import {
     DealOrderId,
     LoanTerms,
     OfferId,
+    Transfer,
     TransferId,
     TransferKind,
 } from 'credal-js/lib/model';
+import { createCreditcoinTransferKind } from 'credal-js/lib/transforms';
 import { addAskOrderAsync, AskOrderAdded } from 'credal-js/lib/extrinsics/add-ask-order';
 import { addAuthorityAsync } from 'credal-js/lib/extrinsics/add-authority';
 import { addBidOrderAsync, BidOrderAdded } from 'credal-js/lib/extrinsics/add-bid-order';
@@ -30,12 +33,11 @@ import { registerFundingTransferAsync, TransferEvent } from 'credal-js/lib/extri
 import { fundDealOrderAsync, DealOrderFunded, TransferProcessed } from 'credal-js/lib/extrinsics/fund-deal-order';
 
 const ETHEREUM_ADDRESS = 'http://localhost:8545';
+export const AUTHORITY_PUBKEY = '0xcce7c3c86f7e4431cdefca6c328bab69af12010a4a9fa0d91be37a24776afd4a';
+export const AUTHORITY_SURI = 'blade city surround refuse fold spring trip enlist myself wild elevator coil';
+export const AUTHORITY_ACCOUNTID = '5GhNUTKw9xkTN5Za4torEe1SAGPhXjM78oNZWAXrFymhB6oZ';
 
 export const setupAuthority = async (api: ApiPromise, sudoSigner: KeyringPair) => {
-    const AUTHORITY_PUBKEY = '0xcce7c3c86f7e4431cdefca6c328bab69af12010a4a9fa0d91be37a24776afd4a';
-    const AUTHORITY_SURI = 'blade city surround refuse fold spring trip enlist myself wild elevator coil';
-    const AUTHORITY_ACCOUNTID = '5GhNUTKw9xkTN5Za4torEe1SAGPhXjM78oNZWAXrFymhB6oZ';
-
     const u8aToHex = (bytes: Uint8Array): string => {
         return bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '0x');
     };
@@ -251,4 +253,24 @@ export const fundDealOrder = async (
     } else {
         throw new Error('FundDealOrder failed');
     }
+};
+
+export const createCreditcoinTransfer = (api: ApiPromise, transfer: Transfer): PalletCreditcoinTransfer => {
+    const toType = (): unknown => {
+        return {
+            blockchain: transfer.blockchain,
+            kind: createCreditcoinTransferKind(api, transfer.kind),
+            from: transfer.from,
+            to: transfer.to,
+            order_id: api.createType('PalletCreditcoinOrderId', { Deal: transfer.orderId }),
+            amount: transfer.amount,
+            tx_id: transfer.txHash,
+            block: transfer.blockNumber,
+            is_processed: transfer.processed,
+            account_id: transfer.accountId,
+            timestamp: transfer.timestamp,
+        };
+    };
+
+    return api.createType('PalletCreditcoinTransfer', toType());
 };
