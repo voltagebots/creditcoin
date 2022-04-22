@@ -17,6 +17,7 @@ import {
     DealOrderId,
     DealOrderAdded,
     DealOrderFunded,
+    DealOrderLocked,
     LoanTerms,
     OfferId,
     Transfer,
@@ -30,6 +31,7 @@ import { addAuthorityAsync } from 'credal-js/lib/extrinsics/add-authority';
 import { addBidOrderAsync, BidOrderAdded } from 'credal-js/lib/extrinsics/add-bid-order';
 import { addDealOrderAsync } from 'credal-js/lib/extrinsics/add-deal-order';
 import { addOfferAsync, OfferAdded } from 'credal-js/lib/extrinsics/add-offer';
+import { lockDealOrderAsync } from 'credal-js/lib/extrinsics/lock-deal-order';
 import { registerAddressAsync, AddressRegistered } from 'credal-js/lib/extrinsics/register-address';
 import { registerDealOrderAsync, DealOrderRegistered } from 'credal-js/lib/extrinsics/register-deal-order';
 import { registerFundingTransferAsync, TransferEvent } from 'credal-js/lib/extrinsics/register-transfers';
@@ -279,4 +281,19 @@ export const createCreditcoinTransfer = (api: ApiPromise, transfer: Transfer): P
     };
 
     return api.createType('PalletCreditcoinTransfer', toType());
+};
+
+export const lockDealOrder = async (
+    api: ApiPromise,
+    dealOrderId: DealOrderId,
+    signer: KeyringPair,
+): Promise<DealOrderLocked> => {
+    const result = await lockDealOrderAsync(api, dealOrderId, signer);
+    expect(result).toBeTruthy();
+
+    if (result) {
+        return result;
+    } else {
+        throw new Error('LockDealOrder failed');
+    }
 };
