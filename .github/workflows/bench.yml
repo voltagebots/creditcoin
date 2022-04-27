@@ -2,9 +2,9 @@ name: BENCHMARK
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on pull request events for testnet
-  pull_request:
-    branches: [pacino]
+  push:
+    branches:
+     - pacino
   workflow_dispatch:
 
 jobs:
