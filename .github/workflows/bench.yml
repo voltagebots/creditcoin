@@ -7,6 +7,10 @@ on:
      - pacino
   workflow_dispatch:
 
+permissions:
+      id-token: write
+      contents: read
+
 jobs:
   hardware-ref:
     runs-on: ubuntu-latest
