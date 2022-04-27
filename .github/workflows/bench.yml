@@ -22,4 +22,4 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - run: |
-          az container exec -g monitoring --name benchmark-node --exec-command ./bench.sh
+          az container exec -g ccsubstrate-sandbox --name hardware-bench --exec-command ./bench.sh
