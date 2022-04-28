@@ -19,6 +19,7 @@ jobs:
       
       - name: Run Benchmarks
         run: |
+          source $HOME/.cargo/env
           pallet=$(grep "impl pallet_" runtime/src/lib.rs | grep "Config for Runtime" | sed 's/impl pallet_//' | cut -f1 -d: | sort)
           for i in $pallet; do
             mkdir -p pallets/$i/src
