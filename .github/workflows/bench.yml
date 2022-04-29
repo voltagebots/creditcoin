@@ -50,3 +50,5 @@ jobs:
           author_email: creditcoin@gluwa.com
           message: 'Creditcoin benchmarks added'
           add: 'report.txt'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
