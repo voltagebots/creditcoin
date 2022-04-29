@@ -16,13 +16,33 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Run Benchmarks
+          
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly-2022-03-21
+          target: wasm32-unknown-unknown
+          profile: minimal
+          override: true
+          
+      - uses: Swatinem/rust-cache@v1
+
+      - name: Build and Run Benchmarks
         shell: bash
         run: |
-          source ~/.cargo/env
           pallet=$(grep "impl pallet_" runtime/src/lib.rs | grep "Config for Runtime" | sed 's/impl pallet_//' | cut -f1 -d: | sort)
           for i in $pallet; do
             mkdir -p pallets/$i/src
             ./scripts/bench.sh -p $i -cb
           done
+
+      - name: Create report file
+        run: date +%s > report.txt
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v8
+        with:
+          author_name: Benchmarks
+          author_email: creditcoin@gluwa.com
+          message: 'Creditcoin benchmarks added'
+          add: 'report.txt'
