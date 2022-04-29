@@ -16,7 +16,10 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-          
+
+      - name: Set env
+        run: echo "HOME=/home/actions" >> $GITHUB_ENV
+        
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
