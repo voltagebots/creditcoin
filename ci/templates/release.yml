@@ -33,7 +33,7 @@ jobs:
         displayName: "GithubRelease '$(TAG)-$(build.date)'"
         inputs:
             gitHubConnection: ${{ parameters['githubConnection'] }}
-            tagSource: manual
+            tagSource: 'userSpecifiedTag'
             title: '$(TAG)'
             tag: '$(TAG)'
             assetUploadMode: ${{ parameters['assetUploadMode'] }}
