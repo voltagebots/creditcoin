@@ -1,7 +1,7 @@
 parameters:
   gitHubConnection: ""                      # Enter the service connection name for your GitHub connection. More: https://aka.ms/AA3am5s
 
-  job_condition: false                      # Default is false since gitHubConnection need to be set manually. Example: `and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))`
+  job_condition: true                      # Default is false since gitHubConnection need to be set manually. Example: `and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))`
   job_displayName: Deploy asserts to github
   job_name: github_deploy
 
