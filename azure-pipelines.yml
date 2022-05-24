@@ -76,6 +76,6 @@ stages:
 #Publish Artifacts
   - template: ./ci/templates/release.yml
     parameters:
-      job_condition: and(succeeded() #, startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+      job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'CSUB-175-automate-github-release'))
       gitHubConnection: 'creditcoin-voltagebot-fork'
       artifactName: target
