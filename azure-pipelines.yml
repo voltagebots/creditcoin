@@ -8,10 +8,6 @@ trigger:
     include:
     - refs/tags/*
     - CSUB-175-automate-github-release
-  paths:
-    exclude:
-    - README.md
-    - ci-linux/*
 
 pr: none
 
@@ -30,7 +26,7 @@ variables:
 
 stages:
 # Docker Image
-- stage: BuildContainer
+- stage: build
   displayName: 'Build Containers & Artifacts'
   jobs:
   - job: Build
@@ -73,7 +69,12 @@ stages:
     parameters:
       artifactName: target
 
-#Publish Artifacts
+
+- stage: PublishArtifacts
+  displayName: 'Publish Artifacts'
+  dependsOn:
+    - build
+  jobs:
   - template: ./ci/templates/release.yml
     parameters:
       job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/CSUB-175-automate-github-release'))
